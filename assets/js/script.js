@@ -149,12 +149,13 @@ class taskList {
   loadTasks() {
     this._tasks = JSON.parse(localStorage.getItem("tasks"));
     if (this._tasks) {
-      this._tasks.forEach((task) => this.addTaskItem(task.content));
+      this._tasks.forEach((task) => this.createNewTaskEl(task));
     }
   }
   toggleImportant(id) {
     const itemToChange = this._taskItems.find((item) => item.id === id);
     itemToChange.important = !itemToChange.important;
+    this.saveTasks();
     if (itemToChange.important) {
       document
         .getElementById(id)
@@ -164,7 +165,6 @@ class taskList {
         .getElementById(id)
         .firstChild.firstChild.classList.remove("important-on");
     }
-    this.saveTasks();
   }
   filterImportant() {
     this._filterImportant = !this._filterImportant;
