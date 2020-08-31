@@ -63,24 +63,64 @@
                 class="mt-1 py-2 bg-transparent border-b-2 text-teal-900 focus:outline-none focus:border-gray-600"
               />
             </label>
-            <button
-              type="submit"
-              class="mt-8 px-4 py-2 bg-teal-600 text-gray-100 font-semibold text-xs shadow-md hover:bg-teal-800"
-            >
-              ADD TASK
-            </button>
+            <div class="flex pt-8 items-center justify-end">
+              <label
+                for="important"
+                class="mr-4 text-gray-900 font-medium text-sm"
+              >
+                <span class="mr-1">Important</span>
+                <input
+                  type="checkbox"
+                  id="important"
+                  class="form-checkbox w-4 h-4"
+                />
+              </label>
+              <button
+                type="submit"
+                class="px-4 py-2 bg-teal-600 text-gray-100 font-semibold text-xs shadow-md hover:bg-teal-800"
+              >
+                ADD TASK
+              </button>
+            </div>
           </form>
         </section>
         <section class="mt-4 pt-8 px-8 border-t-2">
           <h2 class="text-gray-900 font-semibold text-2xl">Tasks</h2>
+          <div class="mt-4 w-full">
+            <button
+              type="button"
+              id="filter-by-important"
+              class="flex items-center text-gray-400 hover:text-gray-900 focus:outline-none"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-6 h-6"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span class="ml-2 text-sm">Filter by Important</span>
+            </button>
+          </div>
           <ul id="task-list" class="py-4"></ul>
-          <button
-            type="button"
-            id="clear-tasks-btn"
-            class="mt-8 px-4 py-2 bg-gray-900 text-gray-100 font-semibold text-xs shadow-md hover:bg-red-800"
-          >
-            CLEAR TASKS
-          </button>
+          <div class="mt-4 w-full flex justify-end">
+            <button
+              type="button"
+              id="clear-tasks-btn"
+              class="px-4 py-2 bg-gray-900 text-gray-100 font-semibold text-xs shadow-md hover:bg-red-800"
+            >
+              CLEAR TASKS
+            </button>
+          </div>
         </section>
       </main>
     </div>

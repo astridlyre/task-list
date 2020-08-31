@@ -1,18 +1,30 @@
 class taskList {
-  constructor(input, form, output, clearBtn, taskItems) {
+  constructor(input, isImportant, filter, form, output, clearBtn, taskItems) {
     this._input = input;
-    this._form = form.addEventListener("submit", (e) => {
+    this._isImportant = isImportant;
+    this._filter = filter;
+    this._filter.addEventListener("click", () => this.filterImportant());
+    this._filterImportant = false;
+    this._form = form;
+    this._form.addEventListener("submit", (e) => {
       e.preventDefault();
       this.addTaskItem(this.input.value);
     });
     this._output = output;
-    this._clearBtn = clearBtn.addEventListener("click", () =>
-      this.clearTasks()
-    );
+    this._clearBtn = clearBtn;
+    this._clearBtn.addEventListener("click", () => this.clearTasks());
     this._taskItems = taskItems;
+    this._importantIcon = `
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
   }
   get input() {
     return this._input;
+  }
+  get isImportant() {
+    return this._isImportant.checked;
+  }
+  get importantIcon() {
+    return this._importantIcon;
   }
   get form() {
     return this._form;
@@ -34,6 +46,7 @@ class taskList {
       content: value,
       createdOn: new Date(),
       id: this.generateId(),
+      important: this.isImportant,
     };
     this._taskItems = this._taskItems.concat(newTask);
     this.createNewTaskEl(newTask);
@@ -51,6 +64,17 @@ class taskList {
   createNewTaskEl(newTask) {
     const newTaskEl = document.createElement("li");
     newTaskEl.classList.add("task-list-item");
+    newTaskEl.id = newTask.id;
+
+    const newTaskElImportantBtn = document.createElement("button");
+    newTaskElImportantBtn.classList.add("task-list-important-btn");
+    newTaskElImportantBtn.innerHTML = this.importantIcon;
+    if (newTask.important) {
+      newTaskElImportantBtn.classList.add("important-on");
+    }
+    newTaskElImportantBtn.addEventListener("click", () =>
+      this.toggleImportant(newTask.id)
+    );
 
     const newTaskElSpan = document.createElement("span");
     newTaskElSpan.classList.add("task-list-span");
@@ -63,8 +87,13 @@ class taskList {
       this.removeTaskItem(newTaskEl, newTask.id)
     );
 
+    const container = document.createElement("div");
+    container.classList.add("task-list-container");
+
     this.output.appendChild(newTaskEl);
-    newTaskEl.appendChild(newTaskElSpan);
+    newTaskEl.appendChild(container);
+    container.appendChild(newTaskElImportantBtn);
+    container.appendChild(newTaskElSpan);
     newTaskEl.appendChild(newTaskElBtn);
   }
   clearTasks() {
@@ -83,10 +112,41 @@ class taskList {
       this._tasks.forEach((task) => this.addTaskItem(task.content));
     }
   }
+  toggleImportant(id) {
+    const itemToChange = this._taskItems.find((item) => item.id === id);
+    itemToChange.important = !itemToChange.important;
+    if (itemToChange.important) {
+      document
+        .getElementById(id)
+        .firstChild.firstChild.classList.add("important-on");
+    } else {
+      document
+        .getElementById(id)
+        .firstChild.firstChild.classList.remove("important-on");
+    }
+    this.saveTasks();
+  }
+  filterImportant() {
+    this._filterImportant = !this._filterImportant;
+    if (this._filterImportant) {
+      this.taskItems.forEach((item) => {
+        if (!item.important)
+          document.getElementById(item.id).style.display = "none";
+      });
+      this._filter.classList.add("important-on");
+    } else {
+      this.taskItems.forEach((item) => {
+        document.getElementById(item.id).style.display = "flex";
+      });
+      this._filter.classList.remove("important-on");
+    }
+  }
 }
 
 const myTaskList = new taskList(
   document.getElementById("task-input"),
+  document.getElementById("important"),
+  document.getElementById("filter-by-important"),
   document.getElementById("task-input-form"),
   document.getElementById("task-list"),
   document.getElementById("clear-tasks-btn"),

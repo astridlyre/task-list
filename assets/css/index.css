@@ -6,8 +6,12 @@
   @apply flex justify-between items-center;
 }
 
+.task-list-container {
+  @apply flex items-center;
+}
+
 .task-list-span {
-  @apply font-medium text-gray-900 text-lg;
+  @apply ml-2 font-medium text-gray-900 text-lg;
 }
 
 .task-list-btn {
@@ -16,6 +20,22 @@
 
 .task-list-btn:hover {
   @apply bg-gray-200;
+}
+
+.task-list-important-btn {
+  @apply text-gray-300 outline-none;
+}
+
+.task-list-important-btn:hover {
+  @apply text-gray-500;
+}
+
+.task-list-important-btn:focus {
+  @apply outline-none;
+}
+
+.important-on {
+  @apply text-gray-900 !important;
 }
 
 @tailwind utilities;

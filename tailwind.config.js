@@ -1,5 +1,8 @@
 module.exports = {
-  purge: ["index.html"],
+  purge: {
+    enabled: true,
+    content: ["index.html"],
+  },
   theme: {
     extend: {},
   },
