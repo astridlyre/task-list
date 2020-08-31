@@ -13,35 +13,22 @@ class taskList {
     // assign properties
     // text input
     this._input = input;
-
     // important checkbox
     this._isImportant = isImportant;
-
     // filter by important button
     this._filterByImportant = filterByImportant;
-
     // initial state of filter
     this._filterImportant = false;
-
     // filter by text input
     this._filterByText = filterByText;
-
     // add task form
     this._form = form;
-
     // output ul element
     this._output = output;
-
     // clear tasks button
     this._clearBtn = clearBtn;
-
     // array of task items for storage and iteration
     this._taskItems = taskItems;
-
-    // icon for setting importance of task
-    this._importantIcon = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
-
     // add event handlers
     this._filterByText.addEventListener("input", (e) =>
       this.filterByText(e.target.value)
@@ -79,91 +66,61 @@ class taskList {
   }
   // methods
   addTaskItem(value) {
-    const newTask = {
+    const newTask = new taskItem({
       content: value,
       createdOn: new Date(),
       id: this.generateId(),
       important: this.isImportant,
-    };
+      parent: this,
+    });
     this._taskItems
       ? (this._taskItems = this._taskItems.concat(newTask))
-      : (this._taskItems = [].concat(newTask));
-    this.createNewTaskEl(newTask);
+      : (this._taskItems = [].concat([newTask]));
+    this.output.appendChild(newTask.render());
     this.saveTasks();
     this.input.value = "";
-  }
-  removeTaskItem(element, id) {
-    this._taskItems = this._taskItems.filter((task) => task.id !== id);
-    this.output.removeChild(element);
-    this.saveTasks();
   }
   generateId() {
     return new Date().getTime();
   }
-  createNewTaskEl(newTask) {
-    const newTaskEl = document.createElement("li");
-    newTaskEl.classList.add("task-list-item");
-    newTaskEl.id = newTask.id;
-
-    const newTaskElImportantBtn = document.createElement("button");
-    newTaskElImportantBtn.classList.add("task-list-important-btn");
-    newTaskElImportantBtn.innerHTML = this.importantIcon;
-    if (newTask.important) {
-      newTaskElImportantBtn.classList.add("important-on");
-    }
-    newTaskElImportantBtn.addEventListener("click", () =>
-      this.toggleImportant(newTask.id)
-    );
-
-    const newTaskElSpan = document.createElement("span");
-    newTaskElSpan.classList.add("task-list-span");
-    newTaskElSpan.innerHTML = newTask.content;
-
-    const newTaskElBtn = document.createElement("button");
-    newTaskElBtn.classList.add("task-list-btn");
-    newTaskElBtn.innerText = "x";
-    newTaskElBtn.addEventListener("click", () =>
-      this.removeTaskItem(newTaskEl, newTask.id)
-    );
-
-    const container = document.createElement("div");
-    container.classList.add("task-list-container");
-
-    this.output.appendChild(newTaskEl);
-    newTaskEl.appendChild(container);
-    container.appendChild(newTaskElImportantBtn);
-    container.appendChild(newTaskElSpan);
-    newTaskEl.appendChild(newTaskElBtn);
-  }
   clearTasks() {
+    this._taskItems.forEach((item) => item.deleteSelf());
     this._taskItems = [];
     this.saveTasks();
-    while (this.output.firstChild) {
-      this.output.removeChild(this.output.firstChild);
-    }
   }
   saveTasks() {
-    localStorage.setItem("tasks", JSON.stringify(this._taskItems));
+    const payload = [];
+    this._taskItems.forEach((task) => {
+      let obj = {
+        content: task.content,
+        createdOn: task.createdOn,
+        id: task.id,
+        important: task.important,
+      };
+      payload.push(obj);
+    });
+    localStorage.setItem("tasks", JSON.stringify(payload));
   }
   loadTasks() {
-    this._taskItems = JSON.parse(localStorage.getItem("tasks"));
-    if (this._taskItems) {
-      this._taskItems.forEach((task) => this.createNewTaskEl(task));
+    const storage = JSON.parse(localStorage.getItem("tasks"));
+    if (storage) {
+      storage.forEach((task) => {
+        const newTask = new taskItem({
+          content: task.content,
+          createdOn: task.createdOn,
+          id: task.id,
+          important: task.important,
+          parent: this,
+        });
+        this._taskItems.push(newTask);
+        this.output.appendChild(newTask.render());
+      });
     }
   }
   toggleImportant(id) {
     const itemToChange = this._taskItems.find((item) => item.id === id);
-    itemToChange.important = !itemToChange.important;
+    itemToChange.toggleImportant();
     this.saveTasks();
-    if (itemToChange.important) {
-      document
-        .getElementById(id)
-        .firstChild.firstChild.classList.add("important-on");
-    } else {
-      document
-        .getElementById(id)
-        .firstChild.firstChild.classList.remove("important-on");
-    }
     this.filterImportant(false);
   }
   filterImportant(toggle = true) {
@@ -184,17 +141,138 @@ class taskList {
   filterByText(value) {
     if (!value) {
       this._taskItems.forEach((item) => {
-        document.getElementById(item.id).style.display = "flex";
+        item.showSelf();
       });
       return;
     }
     this._taskItems.forEach((item) => {
       if (!item.content.toLowerCase().includes(value.toLowerCase())) {
-        document.getElementById(item.id).style.display = "none";
+        item.hideSelf();
       } else {
-        document.getElementById(item.id).style.display = "flex";
+        item.showSelf();
       }
     });
+  }
+  removeTaskItem(id) {
+    this._taskItems
+      ? (this._taskItems = this._taskItems.filter((task) => task.id !== id))
+      : (this._taskItems = []);
+    this.saveTasks();
+  }
+}
+
+// class for each task item
+class taskItem {
+  constructor({ content, createdOn, id, important, parent }) {
+    this._content = content;
+    (this._createdOn = createdOn),
+      (this._id = id),
+      (this._important = important);
+    this._parent = parent;
+    this._isEditing = false;
+    this._importantIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+
+    this._editIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+  }
+  get content() {
+    return this._content;
+  }
+  get createdOn() {
+    return this._createdOn;
+  }
+  get id() {
+    return this._id;
+  }
+  get important() {
+    return this._important;
+  }
+  handleEditContent(value) {
+    this._content = value;
+  }
+  toggleEdit() {
+    this._isEditing = !this._isEditing;
+    let textBox = document.getElementById(`${this.id}-span`);
+    let editBtn = document.getElementById(`${this.id}-edit-btn`);
+    if (this._isEditing) {
+      editBtn.classList.add("important-on");
+      textBox.contentEditable = "true";
+      textBox.focus();
+      document.execCommand("selectAll", false, null);
+      textBox.oninput = this.handleEditContent(event.target.value);
+    } else {
+      editBtn.classList.remove("important-on");
+      this.handleEditContent(textBox.innerText);
+      textBox.contentEditable = "false";
+      this._parent.saveTasks();
+    }
+  }
+  toggleImportant() {
+    this._important = !this._important;
+    const importantBtn = document.getElementById(`${this.id}-important-btn`);
+    if (this.important) {
+      importantBtn.classList.add("important-on");
+    } else {
+      importantBtn.classList.remove("important-on");
+    }
+    this._parent.filterImportant(false);
+    this._parent.saveTasks();
+  }
+  deleteSelf() {
+    this._parent.removeTaskItem(this.id);
+    document.getElementById(this.id).remove();
+  }
+  hideSelf() {
+    document.getElementById(this.id).style.display = "none";
+  }
+  showSelf() {
+    document.getElementById(this.id).style.display = "flex";
+  }
+  render() {
+    const li = document.createElement("li");
+    li.classList.add("task-list-item");
+    li.id = this.id;
+
+    const importantBtn = document.createElement("button");
+    importantBtn.classList.add("task-list-important-btn");
+    importantBtn.innerHTML = this._importantIcon;
+    importantBtn.id = `${this.id}-important-btn`;
+    if (this.important) {
+      importantBtn.classList.add("important-on");
+    }
+    importantBtn.addEventListener("click", () => this.toggleImportant());
+
+    const span = document.createElement("span");
+    span.classList.add("task-list-span");
+    span.id = `${this.id}-span`;
+    span.innerHTML = this.content;
+
+    const editBtn = document.createElement("button");
+    editBtn.classList.add("task-list-edit-btn");
+    editBtn.id = `${this.id}-edit-btn`;
+    editBtn.innerHTML = this._editIcon;
+    editBtn.addEventListener("click", () => this.toggleEdit());
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.classList.add("task-list-btn");
+    deleteBtn.id = `${this.id}-delete-btn`;
+    deleteBtn.innerText = "x";
+    deleteBtn.addEventListener("click", () => this.deleteSelf());
+
+    const leftContainer = document.createElement("div");
+    leftContainer.classList.add("task-list-container");
+
+    const rightContainer = document.createElement("div");
+    rightContainer.classList.add("task-list-container");
+
+    li.appendChild(leftContainer);
+    li.appendChild(rightContainer);
+    leftContainer.appendChild(importantBtn);
+    leftContainer.appendChild(span);
+    rightContainer.appendChild(editBtn);
+    rightContainer.appendChild(deleteBtn);
+
+    return li;
   }
 }
 

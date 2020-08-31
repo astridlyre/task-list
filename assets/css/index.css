@@ -11,7 +11,7 @@
 }
 
 .task-list-span {
-  @apply ml-2 font-medium text-gray-900 text-lg;
+  @apply p-2 font-medium text-gray-900 text-lg;
 }
 
 .task-list-btn {
@@ -34,8 +34,28 @@
   @apply outline-none;
 }
 
+.task-list-edit-btn {
+  @apply mr-2 text-gray-300 outline-none;
+}
+
+.task-list-edit-btn:hover {
+  @apply text-gray-500;
+}
+
+.task-list-edit-btn:focus {
+  @apply outline-none;
+}
+
 .important-on {
   @apply text-gray-900 !important;
+}
+
+[contenteditable="true"],
+[contenteditable="true"]:active,
+[contenteditable="true"]:focus {
+  border: none;
+  outline: none;
+  @apply bg-gray-200 rounded;
 }
 
 @tailwind utilities;
