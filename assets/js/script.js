@@ -74,9 +74,6 @@ class taskList {
   get clearBtn() {
     return this._clearBtn;
   }
-  get taskItems() {
-    return this._taskItems;
-  }
   set input(value) {
     this._input.value = value;
   }
@@ -147,9 +144,9 @@ class taskList {
     localStorage.setItem("tasks", JSON.stringify(this._taskItems));
   }
   loadTasks() {
-    this._tasks = JSON.parse(localStorage.getItem("tasks"));
-    if (this._tasks) {
-      this._tasks.forEach((task) => this.createNewTaskEl(task));
+    this._taskItems = JSON.parse(localStorage.getItem("tasks"));
+    if (this._taskItems) {
+      this._taskItems.forEach((task) => this.createNewTaskEl(task));
     }
   }
   toggleImportant(id) {
@@ -165,30 +162,31 @@ class taskList {
         .getElementById(id)
         .firstChild.firstChild.classList.remove("important-on");
     }
+    this.filterImportant(false);
   }
-  filterImportant() {
-    this._filterImportant = !this._filterImportant;
+  filterImportant(toggle = true) {
+    if (toggle) this._filterImportant = !this._filterImportant;
     if (this._filterImportant) {
-      this.taskItems.forEach((item) => {
+      this._taskItems.forEach((item) => {
         if (!item.important)
           document.getElementById(item.id).style.display = "none";
       });
-      this._filter.classList.add("important-on");
+      this._filterByImportant.classList.add("important-on");
     } else {
-      this.taskItems.forEach((item) => {
+      this._taskItems.forEach((item) => {
         document.getElementById(item.id).style.display = "flex";
       });
-      this._filter.classList.remove("important-on");
+      this._filterByImportant.classList.remove("important-on");
     }
   }
   filterByText(value) {
     if (!value) {
-      this.taskItems.forEach((item) => {
+      this._taskItems.forEach((item) => {
         document.getElementById(item.id).style.display = "flex";
       });
       return;
     }
-    this.taskItems.forEach((item) => {
+    this._taskItems.forEach((item) => {
       if (!item.content.toLowerCase().includes(value.toLowerCase())) {
         document.getElementById(item.id).style.display = "none";
       } else {
