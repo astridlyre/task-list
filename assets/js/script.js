@@ -161,7 +161,7 @@ class taskList {
   }
 }
 
-// class for each task item
+// task list item class
 class taskItem {
   constructor({ content, createdOn, id, important, parent }) {
     this._content = content;
