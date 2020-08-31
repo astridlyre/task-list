@@ -187,9 +187,6 @@ class taskItem {
   get important() {
     return this._important;
   }
-  handleEditContent(value) {
-    this._content = value;
-  }
   toggleEdit() {
     this._isEditing = !this._isEditing;
     let textBox = document.getElementById(`${this.id}-span`);
@@ -199,11 +196,13 @@ class taskItem {
       textBox.contentEditable = "true";
       textBox.focus();
       document.execCommand("selectAll", false, null);
-      textBox.oninput = this.handleEditContent(event.target.value);
+      textBox.onkeypress = () => {
+        if (event.key === "Enter") this.toggleEdit();
+      };
     } else {
       editBtn.classList.remove("important-on");
-      this.handleEditContent(textBox.innerText);
       textBox.contentEditable = "false";
+      this._content = textBox.innerText;
       this._parent.saveTasks();
     }
   }
