@@ -85,7 +85,7 @@ class taskList {
       id: this.generateId(),
       important: this.isImportant,
     };
-    this._taskItems = this._taskItems.concat(newTask);
+    this._taskItems = [...this._taskItems].concat(newTask);
     this.createNewTaskEl(newTask);
     this.saveTasks();
     this.input.value = "";
