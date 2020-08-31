@@ -1,0 +1,21 @@
+@tailwind base;
+
+@tailwind components;
+
+.task-list-item {
+  @apply flex justify-between items-center;
+}
+
+.task-list-span {
+  @apply font-medium text-gray-900 text-lg;
+}
+
+.task-list-btn {
+  @apply font-black text-red-500 px-4 py-2 rounded;
+}
+
+.task-list-btn:hover {
+  @apply bg-gray-200;
+}
+
+@tailwind utilities;

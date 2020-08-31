@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/css/app.css" />
+    <script src="/assets/js/script.js" defer></script>
+    <title>Task List</title>
+  </head>
+  <body class="bg-gray-100 flex justify-center">
+    <div
+      class="mt-4 py-8 w-full max-w-screen-sm shadow-lg border-2 border-gray-200"
+    >
+      <header class="px-8">
+        <h1 class="text-3xl font-semibold text-gray-900">Task List</h1>
+      </header>
+      <main>
+        <section id="task-form-section" class="mt-4 px-8 pb-4">
+          <form id="task-input-form">
+            <label for="task-input" class="flex flex-col">
+              <input
+                type="text"
+                max="140"
+                id="task-input"
+                placeholder="New Task"
+                required
+                class="mt-1 py-2 bg-transparent border-b-2 text-teal-900 focus:outline-none focus:border-gray-600"
+              />
+            </label>
+            <button
+              type="submit"
+              class="mt-8 px-4 py-2 bg-teal-600 text-gray-100 font-semibold text-xs shadow-md hover:bg-teal-800"
+            >
+              ADD TASK
+            </button>
+          </form>
+        </section>
+        <section class="mt-4 pt-8 px-8 border-t-2">
+          <h2 class="text-gray-900 font-semibold text-2xl">Tasks</h2>
+          <ul id="task-list" class="py-4"></ul>
+          <button
+            type="button"
+            id="clear-tasks-btn"
+            class="mt-8 px-4 py-2 bg-gray-900 text-gray-100 font-semibold text-xs shadow-md hover:bg-red-800"
+          >
+            CLEAR TASKS
+          </button>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

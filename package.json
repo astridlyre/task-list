@@ -1,0 +1,19 @@
+{
+  "name": "task-list",
+  "version": "1.0.0",
+  "description": "task list project",
+  "main": "index.js",
+  "scripts": {
+    "start": "tailwindcss build assets/css/index.css -o assets/css/app.css",
+    "build": "tailwindcss purge assets/css/index.css -o assets/css/app.css",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Astrid Lyre",
+  "license": "MIT",
+  "dependencies": {
+    "tailwindcss": "^1.7.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/custom-forms": "^0.2.1"
+  }
+}
