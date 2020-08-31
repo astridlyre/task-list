@@ -1,3 +1,4 @@
+// Task list class
 class taskList {
   constructor(
     input,
@@ -9,29 +10,52 @@ class taskList {
     clearBtn,
     taskItems
   ) {
+    // assign properties
+    // text input
     this._input = input;
+
+    // important checkbox
     this._isImportant = isImportant;
+
+    // filter by important button
     this._filterByImportant = filterByImportant;
-    this._filterByImportant.addEventListener("click", () =>
-      this.filterImportant()
-    );
+
+    // initial state of filter
     this._filterImportant = false;
+
+    // filter by text input
     this._filterByText = filterByText;
+
+    // add task form
+    this._form = form;
+
+    // output ul element
+    this._output = output;
+
+    // clear tasks button
+    this._clearBtn = clearBtn;
+
+    // array of task items for storage and iteration
+    this._taskItems = taskItems;
+
+    // icon for setting importance of task
+    this._importantIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+
+    // add event handlers
     this._filterByText.addEventListener("input", (e) =>
       this.filterByText(e.target.value)
     );
-    this._form = form;
     this._form.addEventListener("submit", (e) => {
       e.preventDefault();
       this.addTaskItem(this.input.value);
     });
-    this._output = output;
-    this._clearBtn = clearBtn;
     this._clearBtn.addEventListener("click", () => this.clearTasks());
-    this._taskItems = taskItems;
-    this._importantIcon = `
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+    this._filterByImportant.addEventListener("click", () =>
+      this.filterImportant()
+    );
   }
+  // getters and setters
   get input() {
     return this._input;
   }
@@ -56,6 +80,7 @@ class taskList {
   set input(value) {
     this._input.value = value;
   }
+  // methods
   addTaskItem(value) {
     const newTask = {
       content: value,
@@ -173,6 +198,7 @@ class taskList {
   }
 }
 
+// initialize the task list
 const myTaskList = new taskList(
   document.getElementById("task-input"),
   document.getElementById("important"),
@@ -184,6 +210,7 @@ const myTaskList = new taskList(
   []
 );
 
+// retrieve tasks from local storage on load
 document.addEventListener("DOMContentLoaded", (event) => {
   myTaskList.loadTasks();
 });
