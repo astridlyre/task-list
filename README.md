@@ -6,4 +6,4 @@ Persistent data on browser refresh with Local Storage. Clean UI made with [Tailw
 
 ![Site Image](site.jpg)
 
-See the live project [here](https://astridlyre.github.com/task-list/).
+See the live project [here](https://astridlyre.github.io/task-list/).
