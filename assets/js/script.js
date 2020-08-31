@@ -79,7 +79,9 @@ class taskList {
   }
   loadTasks() {
     this._tasks = JSON.parse(localStorage.getItem("tasks"));
-    this._tasks.forEach((task) => this.addTaskItem(task.content));
+    if (this._tasks) {
+      this._tasks.forEach((task) => this.addTaskItem(task.content));
+    }
   }
 }
 
