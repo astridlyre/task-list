@@ -23,8 +23,6 @@
 }
 
 .task-list-p {
-  word-break: break-all;
-  word-wrap: break-word;
   @apply px-2 font-medium text-gray-900 text-lg block w-full;
 }
 
