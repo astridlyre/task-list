@@ -15,7 +15,7 @@
 }
 
 .task-list-created-on {
-  @apply mt-2 px-2 block text-gray-500 text-xs;
+  @apply mt-1 px-2 block text-gray-500 text-xs;
 }
 
 .task-list-p {
