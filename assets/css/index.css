@@ -2,6 +2,10 @@
 
 @tailwind components;
 
+.ease {
+  transition: all 0.1s ease-out;
+}
+
 .task-list-item {
   @apply py-2 flex justify-between items-start;
 }
@@ -25,39 +29,39 @@
 }
 
 .task-list-btn {
-  @apply -mt-2 font-black text-red-500 px-4 py-2 rounded;
+  @apply -mt-2 font-black text-red-500 px-4 py-2 rounded ease;
 }
 
 .task-list-btn:hover {
-  @apply bg-gray-200;
+  @apply bg-gray-200 ease;
 }
 
 .task-list-important-btn {
-  @apply text-gray-300 outline-none;
+  @apply text-gray-300 outline-none ease;
 }
 
 .task-list-important-btn:hover {
-  @apply text-gray-500;
+  @apply text-gray-500 ease;
 }
 
 .task-list-important-btn:focus {
-  @apply outline-none;
+  @apply outline-none ease;
 }
 
 .task-list-edit-btn {
-  @apply mr-2 text-gray-300 outline-none;
+  @apply mr-2 text-gray-300 outline-none ease;
 }
 
 .task-list-edit-btn:hover {
-  @apply text-gray-500;
+  @apply text-gray-500 ease;
 }
 
 .task-list-edit-btn:focus {
-  @apply outline-none;
+  @apply outline-none ease;
 }
 
 .important-on {
-  @apply text-gray-900 !important;
+  @apply text-gray-900 ease !important;
 }
 
 [contenteditable="true"],
@@ -65,7 +69,7 @@
 [contenteditable="true"]:focus {
   border: none;
   outline: none;
-  @apply bg-gray-200 rounded;
+  @apply bg-gray-200 rounded ease;
 }
 
 @tailwind utilities;
