@@ -54,7 +54,7 @@ class TaskList {
     });
     this.taskItems
       ? (this.taskItems = this.taskItems.concat(newTask))
-      : (this.taskItems = [].concat([newTask]));
+      : (this.taskItems = [].concat(newTask));
     this.output.appendChild(newTask.render());
     this.saveTasks();
     this.setInputValue("");
@@ -245,59 +245,79 @@ class TaskItem {
     this.li.style.display = "flex";
   }
 
+  createElement(element, params) {
+    const el = document.createElement(element);
+    el.classList.add(...params.classNames);
+    if (params.content) el.innerHTML = params.content;
+    return el;
+  }
+
   render() {
     // create li
-    this.setLi(document.createElement("li")).classList.add("task-list-item");
+    this.setLi(
+      this.createElement("li", {
+        classNames: ["task-list-item"],
+      })
+    );
 
     // create button to toggle importance
-    this.setImportantBtn(document.createElement("button")).classList.add(
-      "task-list-important-btn"
-    );
-    this.importantBtn.innerHTML = this._importantIcon;
-    if (this.important) {
-      this.importantBtn.classList.add("important-on");
-    }
-    this.importantBtn.addEventListener("click", () => this.toggleImportant());
+    this.setImportantBtn(
+      this.createElement("button", {
+        classNames: this.important
+          ? ["task-list-important-btn", "important-on"]
+          : ["task-list-important-btn"],
+        content: this._importantIcon,
+      })
+    ).addEventListener("click", () => this.toggleImportant());
 
     // create paragraph with content
-    this.setP(document.createElement("p")).classList.add("task-list-p");
-    this.p.innerHTML = this.content;
+    this.setP(
+      this.createElement("p", {
+        classNames: ["task-list-p"],
+        content: this.content,
+      })
+    );
 
     // create edit button
-    this.setEditBtn(document.createElement("button")).classList.add(
-      "task-list-edit-btn"
-    );
-    this.editBtn.innerHTML = this._editIcon;
-    this.editBtn.addEventListener("click", () => this.toggleEdit());
+    this.setEditBtn(
+      this.createElement("button", {
+        classNames: ["task-list-edit-btn"],
+        content: this._editIcon,
+      })
+    ).addEventListener("click", () => this.toggleEdit());
 
     // create delete button
-    this.setDeleteBtn(document.createElement("button")).classList.add(
-      "task-list-btn"
-    );
-    this.deleteBtn.innerText = "x";
-    this.deleteBtn.addEventListener("click", () => this.deleteSelf());
+    this.setDeleteBtn(
+      this.createElement("button", {
+        classNames: ["task-list-btn"],
+        content: "x",
+      })
+    ).addEventListener("click", () => this.deleteSelf());
 
-    this.setCreatedOnSpan(document.createElement("span")).classList.add(
-      "task-list-created-on"
+    // create time stamp span
+    this.setCreatedOnSpan(
+      this.createElement("span", {
+        classNames: ["task-list-created-on"],
+        content: `Created on ${this.createdOn}`,
+      })
     );
-    this.createdOnSpan.innerText = `Created on ${this.createdOn}`;
 
     // containers
-    const leftContainer = document.createElement("div");
-    leftContainer.classList.add("task-list-container");
-    const pContainer = document.createElement("div");
-    pContainer.classList.add("task-list-p-container");
-    const rightContainer = document.createElement("div");
-    rightContainer.classList.add("task-list-container");
+    const leftContainer = this.createElement("div", {
+      classNames: ["task-list-container"],
+    });
+    const pContainer = this.createElement("div", {
+      classNames: ["task-list-p-container"],
+    });
+    const rightContainer = this.createElement("div", {
+      classNames: ["task-list-container"],
+    });
 
     // add elements together
-    this.li.appendChild(leftContainer);
-    this.li.appendChild(rightContainer);
-    leftContainer.appendChild(this.importantBtn);
-    leftContainer.appendChild(pContainer);
-    pContainer.appendChild(this.p);
+    this.li.appendChild(leftContainer).appendChild(this.importantBtn);
+    this.li.appendChild(rightContainer).appendChild(this.editBtn);
+    leftContainer.appendChild(pContainer).appendChild(this.p);
     pContainer.appendChild(this.createdOnSpan);
-    rightContainer.appendChild(this.editBtn);
     rightContainer.appendChild(this.deleteBtn);
 
     // task item ready to send to DOM
