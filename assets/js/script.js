@@ -1,5 +1,5 @@
 // Task list class
-class taskList {
+class TaskList {
   constructor(
     input,
     isImportant,
@@ -45,7 +45,7 @@ class taskList {
   }
 
   addTaskItem(value) {
-    const newTask = new taskItem({
+    const newTask = new TaskItem({
       content: value,
       createdOn: new Date().toLocaleString(),
       id: this.generateId(),
@@ -88,7 +88,7 @@ class taskList {
     const storage = JSON.parse(localStorage.getItem("tasks"));
     if (storage) {
       storage.forEach((task) => {
-        const newTask = new taskItem({
+        const newTask = new TaskItem({
           content: task.content,
           createdOn: task.createdOn,
           id: task.id,
@@ -147,7 +147,7 @@ class taskList {
 }
 
 // task list item class
-class taskItem {
+class TaskItem {
   constructor({ content, createdOn, id, important, parent }) {
     this.content = content;
     this.createdOn = createdOn;
@@ -215,6 +215,7 @@ class taskItem {
     } else {
       this.editBtn.classList.remove("important-on");
       this.p.contentEditable = "false";
+      window.getSelection().removeAllRanges();
       this.content = this.p.innerText;
       this.parent.saveTasks();
     }
@@ -305,7 +306,7 @@ class taskItem {
 }
 
 // initialize the task list
-const myTaskList = new taskList(
+const myTaskList = new TaskList(
   document.getElementById("task-input"),
   document.getElementById("important"),
   document.getElementById("filter-by-important"),
