@@ -3,21 +3,29 @@
 @tailwind components;
 
 .task-list-item {
-  @apply flex justify-between items-center;
+  @apply py-2 flex justify-between items-start;
 }
 
 .task-list-container {
-  @apply flex items-center;
+  @apply flex items-start;
+}
+
+.task-list-p-container {
+  @apply flex flex-col;
+}
+
+.task-list-created-on {
+  @apply mt-2 px-2 block text-gray-500 text-xs;
 }
 
 .task-list-p {
   word-break: break-all;
   word-wrap: break-word;
-  @apply p-2 font-medium text-gray-900 text-lg block;
+  @apply px-2 font-medium text-gray-900 text-lg block w-full;
 }
 
 .task-list-btn {
-  @apply font-black text-red-500 px-4 py-2 rounded;
+  @apply -mt-2 font-black text-red-500 px-4 py-2 rounded;
 }
 
 .task-list-btn:hover {

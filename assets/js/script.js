@@ -47,7 +47,7 @@ class taskList {
   addTaskItem(value) {
     const newTask = new taskItem({
       content: value,
-      createdOn: new Date(),
+      createdOn: new Date().toLocaleString(),
       id: this.generateId(),
       important: this.getIsImportant(),
       parent: this,
@@ -167,6 +167,7 @@ class taskItem {
     this.editBtn = null;
     this.importantBtn = null;
     this.deleteBtn = null;
+    this.createdOnSpan = null;
   }
 
   setLi(element) {
@@ -192,6 +193,11 @@ class taskItem {
   setDeleteBtn(element) {
     this.deleteBtn = element;
     return this.deleteBtn;
+  }
+
+  setCreatedOnSpan(element) {
+    this.createdOnSpan = element;
+    return this.createdOnSpan;
   }
 
   toggleEdit() {
@@ -270,9 +276,16 @@ class taskItem {
     this.deleteBtn.innerText = "x";
     this.deleteBtn.addEventListener("click", () => this.deleteSelf());
 
+    this.setCreatedOnSpan(document.createElement("span")).classList.add(
+      "task-list-created-on"
+    );
+    this.createdOnSpan.innerText = `Created on ${this.createdOn}`;
+
     // containers
     const leftContainer = document.createElement("div");
     leftContainer.classList.add("task-list-container");
+    const pContainer = document.createElement("div");
+    pContainer.classList.add("task-list-p-container");
     const rightContainer = document.createElement("div");
     rightContainer.classList.add("task-list-container");
 
@@ -280,7 +293,9 @@ class taskItem {
     this.li.appendChild(leftContainer);
     this.li.appendChild(rightContainer);
     leftContainer.appendChild(this.importantBtn);
-    leftContainer.appendChild(this.p);
+    leftContainer.appendChild(pContainer);
+    pContainer.appendChild(this.p);
+    pContainer.appendChild(this.createdOnSpan);
     rightContainer.appendChild(this.editBtn);
     rightContainer.appendChild(this.deleteBtn);
 

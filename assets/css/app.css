@@ -866,29 +866,50 @@ video {
 }
 
 .task-list-item {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .task-list-container {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+}
+
+.task-list-p-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.task-list-created-on {
+  margin-top: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  display: block;
+  --text-opacity: 1;
+  color: #a0aec0;
+  color: rgba(160, 174, 192, var(--text-opacity));
+  font-size: 0.75rem;
 }
 
 .task-list-p {
   word-break: break-all;
   word-wrap: break-word;
-  padding: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
   font-weight: 500;
   --text-opacity: 1;
   color: #1a202c;
   color: rgba(26, 32, 44, var(--text-opacity));
   font-size: 1.125rem;
   display: block;
+  width: 100%;
 }
 
 .task-list-btn {
+  margin-top: -0.5rem;
   font-weight: 900;
   --text-opacity: 1;
   color: #f56565;
