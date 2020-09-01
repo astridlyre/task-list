@@ -10,8 +10,10 @@
   @apply flex items-center;
 }
 
-.task-list-span {
-  @apply p-2 font-medium text-gray-900 text-lg;
+.task-list-p {
+  word-break: break-all;
+  word-wrap: break-word;
+  @apply p-2 font-medium text-gray-900 text-lg block;
 }
 
 .task-list-btn {

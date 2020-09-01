@@ -11,86 +11,68 @@ class taskList {
     taskItems
   ) {
     // assign properties
-    // text input
-    this._input = input;
-    // important checkbox
-    this._isImportant = isImportant;
-    // filter by important button
-    this._filterByImportant = filterByImportant;
-    // initial state of filter
+    // _props are just for functionality
+    this.input = input;
+    this.isImportant = isImportant;
+    this.filterByImportant = filterByImportant;
     this._filterImportant = false;
-    // filter by text input
     this._filterByText = filterByText;
-    // add task form
-    this._form = form;
-    // output ul element
-    this._output = output;
-    // clear tasks button
-    this._clearBtn = clearBtn;
-    // array of task items for storage and iteration
-    this._taskItems = taskItems;
+    this.form = form;
+    this.output = output;
+    this.clearBtn = clearBtn;
+    this.taskItems = taskItems;
+
     // add event handlers
     this._filterByText.addEventListener("input", (e) =>
       this.filterByText(e.target.value)
     );
-    this._form.addEventListener("submit", (e) => {
+    this.form.addEventListener("submit", (e) => {
       e.preventDefault();
       this.addTaskItem(this.input.value);
     });
-    this._clearBtn.addEventListener("click", () => this.clearTasks());
-    this._filterByImportant.addEventListener("click", () =>
-      this.filterImportant()
+    this.clearBtn.addEventListener("click", () => this.clearTasks());
+    this.filterByImportant.addEventListener("click", () =>
+      this.filterImportant({ toggle: true })
     );
   }
-  // getters and setters
-  get input() {
-    return this._input;
-  }
-  get isImportant() {
-    return this._isImportant.checked;
-  }
-  get importantIcon() {
-    return this._importantIcon;
-  }
-  get form() {
-    return this._form;
-  }
-  get output() {
-    return this._output;
-  }
-  get clearBtn() {
-    return this._clearBtn;
-  }
-  set input(value) {
-    this._input.value = value;
-  }
   // methods
+  getIsImportant() {
+    return this.isImportant.checked;
+  }
+
+  setInputValue(value) {
+    this.input.value = value;
+  }
+
   addTaskItem(value) {
     const newTask = new taskItem({
       content: value,
       createdOn: new Date(),
       id: this.generateId(),
-      important: this.isImportant,
+      important: this.getIsImportant(),
       parent: this,
     });
-    this._taskItems
-      ? (this._taskItems = this._taskItems.concat(newTask))
-      : (this._taskItems = [].concat([newTask]));
+    this.taskItems
+      ? (this.taskItems = this.taskItems.concat(newTask))
+      : (this.taskItems = [].concat([newTask]));
     this.output.appendChild(newTask.render());
     this.saveTasks();
-    this.input.value = "";
+    this.setInputValue("");
   }
+
   generateId() {
     return new Date().getTime();
   }
+
   clearTasks() {
-    this._taskItems.forEach((item) => item.deleteSelf());
-    this._taskItems = [];
+    this.taskItems.forEach((item) => item.deleteSelf());
+    this.taskItems = [];
     this.saveTasks();
   }
+
   saveTasks() {
     const payload = [];
-    this._taskItems.forEach((task) => {
+    this.taskItems.forEach((task) => {
       let obj = {
         content: task.content,
         createdOn: task.createdOn,
@@ -101,6 +83,7 @@ class taskList {
     });
     localStorage.setItem("tasks", JSON.stringify(payload));
   }
+
   loadTasks() {
     const storage = JSON.parse(localStorage.getItem("tasks"));
     if (storage) {
@@ -112,51 +95,53 @@ class taskList {
           important: task.important,
           parent: this,
         });
-        this._taskItems.push(newTask);
+        this.taskItems.push(newTask);
         this.output.appendChild(newTask.render());
       });
     }
   }
+
   toggleImportant(id) {
-    const itemToChange = this._taskItems.find((item) => item.id === id);
-    itemToChange.toggleImportant();
+    this.taskItems.find((item) => item.id === id).toggleImportant();
     this.saveTasks();
-    this.filterImportant(false);
+    this.filterImportant({ toggle: false });
   }
-  filterImportant(toggle = true) {
+
+  filterImportant({ toggle }) {
     if (toggle) this._filterImportant = !this._filterImportant;
     if (this._filterImportant) {
-      this._taskItems.forEach((item) => {
-        if (!item.important)
-          document.getElementById(item.id).style.display = "none";
+      this.taskItems.forEach((item) => {
+        if (!item.important) item.hideSelf();
       });
-      this._filterByImportant.classList.add("important-on");
+      this.filterByImportant.classList.add("important-on");
     } else {
-      this._taskItems.forEach((item) => {
-        document.getElementById(item.id).style.display = "flex";
+      this.taskItems.forEach((item) => {
+        item.showSelf();
       });
-      this._filterByImportant.classList.remove("important-on");
+      this.filterByImportant.classList.remove("important-on");
     }
   }
+
   filterByText(value) {
     if (!value) {
-      this._taskItems.forEach((item) => {
+      this.taskItems.forEach((item) => {
         item.showSelf();
       });
       return;
     }
-    this._taskItems.forEach((item) => {
-      if (!item.content.toLowerCase().includes(value.toLowerCase())) {
-        item.hideSelf();
-      } else {
+    this.taskItems.forEach((item) => {
+      if (item.content.toLowerCase().includes(value.toLowerCase())) {
         item.showSelf();
+      } else {
+        item.hideSelf();
       }
     });
   }
+
   removeTaskItem(id) {
-    this._taskItems
-      ? (this._taskItems = this._taskItems.filter((task) => task.id !== id))
-      : (this._taskItems = []);
+    this.taskItems
+      ? (this.taskItems = this.taskItems.filter((task) => task.id !== id))
+      : (this.taskItems = []);
     this.saveTasks();
   }
 }
@@ -164,114 +149,143 @@ class taskList {
 // task list item class
 class taskItem {
   constructor({ content, createdOn, id, important, parent }) {
-    this._content = content;
-    (this._createdOn = createdOn),
-      (this._id = id),
-      (this._important = important);
-    this._parent = parent;
-    this._isEditing = false;
+    this.content = content;
+    this.createdOn = createdOn;
+    this.id = id;
+    this.important = important;
+    this.parent = parent;
+    this.isEditing = false;
+
+    // icons
     this._importantIcon = `
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
-
     this._editIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+
+    // element props
+    this.li = null;
+    this.p = null;
+    this.editBtn = null;
+    this.importantBtn = null;
+    this.deleteBtn = null;
   }
-  get content() {
-    return this._content;
+
+  setLi(element) {
+    this.li = element;
+    return this.li;
   }
-  get createdOn() {
-    return this._createdOn;
+
+  setP(element) {
+    this.p = element;
+    return this.p;
   }
-  get id() {
-    return this._id;
+
+  setEditBtn(element) {
+    this.editBtn = element;
+    return this.editBtn;
   }
-  get important() {
-    return this._important;
+
+  setImportantBtn(element) {
+    this.importantBtn = element;
+    return this.importantBtn;
   }
+
+  setDeleteBtn(element) {
+    this.deleteBtn = element;
+    return this.deleteBtn;
+  }
+
   toggleEdit() {
-    this._isEditing = !this._isEditing;
-    let textBox = document.getElementById(`${this.id}-span`);
-    let editBtn = document.getElementById(`${this.id}-edit-btn`);
-    if (this._isEditing) {
-      editBtn.classList.add("important-on");
-      textBox.contentEditable = "true";
-      textBox.focus();
+    // first change state of editing
+    this.isEditing = !this.isEditing;
+    // then handle the next steps
+    if (this.isEditing) {
+      this.editBtn.classList.add("important-on");
+      this.p.contentEditable = "true";
+      this.p.focus();
       document.execCommand("selectAll", false, null);
-      textBox.onkeypress = () => {
+      this.p.onkeypress = () => {
         if (event.key === "Enter") this.toggleEdit();
       };
     } else {
-      editBtn.classList.remove("important-on");
-      textBox.contentEditable = "false";
-      this._content = textBox.innerText;
-      this._parent.saveTasks();
+      this.editBtn.classList.remove("important-on");
+      this.p.contentEditable = "false";
+      this.content = this.p.innerText;
+      this.parent.saveTasks();
     }
   }
+
   toggleImportant() {
-    this._important = !this._important;
-    const importantBtn = document.getElementById(`${this.id}-important-btn`);
+    this.important = !this.important;
     if (this.important) {
-      importantBtn.classList.add("important-on");
+      this.importantBtn.classList.add("important-on");
     } else {
-      importantBtn.classList.remove("important-on");
+      this.importantBtn.classList.remove("important-on");
     }
-    this._parent.filterImportant(false);
-    this._parent.saveTasks();
+    this.parent.filterImportant(false);
+    this.parent.saveTasks();
   }
+
   deleteSelf() {
-    this._parent.removeTaskItem(this.id);
-    document.getElementById(this.id).remove();
+    this.parent.removeTaskItem(this.id);
+    this.li.remove();
   }
+
   hideSelf() {
-    document.getElementById(this.id).style.display = "none";
+    this.li.style.display = "none";
   }
+
   showSelf() {
-    document.getElementById(this.id).style.display = "flex";
+    this.li.style.display = "flex";
   }
+
   render() {
-    const li = document.createElement("li");
-    li.classList.add("task-list-item");
-    li.id = this.id;
+    // create li
+    this.setLi(document.createElement("li")).classList.add("task-list-item");
 
-    const importantBtn = document.createElement("button");
-    importantBtn.classList.add("task-list-important-btn");
-    importantBtn.innerHTML = this._importantIcon;
-    importantBtn.id = `${this.id}-important-btn`;
+    // create button to toggle importance
+    this.setImportantBtn(document.createElement("button")).classList.add(
+      "task-list-important-btn"
+    );
+    this.importantBtn.innerHTML = this._importantIcon;
     if (this.important) {
-      importantBtn.classList.add("important-on");
+      this.importantBtn.classList.add("important-on");
     }
-    importantBtn.addEventListener("click", () => this.toggleImportant());
+    this.importantBtn.addEventListener("click", () => this.toggleImportant());
 
-    const span = document.createElement("span");
-    span.classList.add("task-list-span");
-    span.id = `${this.id}-span`;
-    span.innerHTML = this.content;
+    // create paragraph with content
+    this.setP(document.createElement("p")).classList.add("task-list-p");
+    this.p.innerHTML = this.content;
 
-    const editBtn = document.createElement("button");
-    editBtn.classList.add("task-list-edit-btn");
-    editBtn.id = `${this.id}-edit-btn`;
-    editBtn.innerHTML = this._editIcon;
-    editBtn.addEventListener("click", () => this.toggleEdit());
+    // create edit button
+    this.setEditBtn(document.createElement("button")).classList.add(
+      "task-list-edit-btn"
+    );
+    this.editBtn.innerHTML = this._editIcon;
+    this.editBtn.addEventListener("click", () => this.toggleEdit());
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.classList.add("task-list-btn");
-    deleteBtn.id = `${this.id}-delete-btn`;
-    deleteBtn.innerText = "x";
-    deleteBtn.addEventListener("click", () => this.deleteSelf());
+    // create delete button
+    this.setDeleteBtn(document.createElement("button")).classList.add(
+      "task-list-btn"
+    );
+    this.deleteBtn.innerText = "x";
+    this.deleteBtn.addEventListener("click", () => this.deleteSelf());
 
+    // containers
     const leftContainer = document.createElement("div");
     leftContainer.classList.add("task-list-container");
-
     const rightContainer = document.createElement("div");
     rightContainer.classList.add("task-list-container");
 
-    li.appendChild(leftContainer);
-    li.appendChild(rightContainer);
-    leftContainer.appendChild(importantBtn);
-    leftContainer.appendChild(span);
-    rightContainer.appendChild(editBtn);
-    rightContainer.appendChild(deleteBtn);
+    // add elements together
+    this.li.appendChild(leftContainer);
+    this.li.appendChild(rightContainer);
+    leftContainer.appendChild(this.importantBtn);
+    leftContainer.appendChild(this.p);
+    rightContainer.appendChild(this.editBtn);
+    rightContainer.appendChild(this.deleteBtn);
 
-    return li;
+    // task item ready to send to DOM
+    return this.li;
   }
 }
 

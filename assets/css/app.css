@@ -876,13 +876,16 @@ video {
   align-items: center;
 }
 
-.task-list-span {
+.task-list-p {
+  word-break: break-all;
+  word-wrap: break-word;
   padding: 0.5rem;
   font-weight: 500;
   --text-opacity: 1;
   color: #1a202c;
   color: rgba(26, 32, 44, var(--text-opacity));
   font-size: 1.125rem;
+  display: block;
 }
 
 .task-list-btn {
