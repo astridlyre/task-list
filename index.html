@@ -51,13 +51,13 @@
 
   <body class="bg-gray-100 flex justify-center">
     <div
-      class="mt-4 py-8 w-full max-w-screen-sm shadow-lg border-2 border-gray-200"
+      class="sm:mt-4 py-8 w-full max-w-screen-sm shadow-lg border-2 border-gray-200"
     >
-      <header class="px-8">
+      <header class="sm:px-8 px-4">
         <h1 class="text-3xl font-semibold text-gray-900">Task List</h1>
       </header>
       <main>
-        <section id="task-form-section" class="mt-4 px-8 pb-4">
+        <section id="task-form-section" class="mt-4 sm:px-8 px-4 pb-4">
           <!-- New task input form -->
           <form id="task-input-form">
             <label for="task-input" class="flex flex-col">
@@ -92,10 +92,12 @@
           </form>
           <!-- End new task input form -->
         </section>
-        <section class="mt-4 pt-8 px-8 border-t-2">
+        <section class="mt-4 pt-8 sm:px-8 px-4 border-t-2">
           <!-- Task filters -->
           <h2 class="text-gray-900 font-semibold text-2xl">Tasks</h2>
-          <div class="mt-4 w-full flex justify-between items-center">
+          <div
+            class="mt-4 w-full flex sm:flex-row flex-col sm:justify-between sm:items-center"
+          >
             <button
               type="button"
               id="filter-by-important"
@@ -122,7 +124,7 @@
             <input
               type="text"
               id="filter-by-text"
-              class="border-b-2 py-2 w-1/2 bg-transparent focus:outline-none"
+              class="mt-4 sm:mt-0 border-b-2 py-2 sm:w-1/2 bg-transparent focus:outline-none"
               placeholder="Filter by Text"
             />
           </div>
